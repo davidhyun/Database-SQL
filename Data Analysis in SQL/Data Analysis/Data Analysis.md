@@ -45,6 +45,11 @@ SELECT FLOOR(height) FROM `member`; -- 내림
 - `IS NULL`과 `= NULL`을 혼동하지 말아야한다. NULL은 숫자가 아니기 때문에 값과 비교할 수 없다.
 - NULL에는 어떤 연산을 해도 결국 NULL이다.
 
+1. COALESCE 함수
+2. IFNULL 함수
+3. IF 함수
+4. CASE 함수
+
 ```mysql
 SELECT * FROM `member` WHERE address IS NULL;
 SELECT * FROM `member` WHERE address IS NOT NULL;
@@ -54,11 +59,31 @@ WHERE height IS NULL
 	OR weight IS NULL
 	OR address IS NULL;
 
--- NULL이면 두번째 인자값을 return
+-- COALESCE 함수
 SELECT 
-	COALESCE(height, '####'),
-	COALESCE(weight, '----'),
-	COALESCE(address, '@@@@')
+	COALESCE(height, '####') AS 'NULL(####)',
+	COALESCE(weight, '----') AS 'NULL(----)',
+	COALESCE(address, '@@@@') AS 'NULL(@@@@)'
+FROM `member`;
+
+-- height에만 NULL 값이 있고 weight에는 값이 있다면 
+-- height 값에 (weight *2.3) 값을 넣고 
+-- height, weight열 모두 NULL값이면 'N/A'
+SELECT COALESCE(height, weight * 2.3, 'N/A') AS 'NULL_check' FROM `member`;
+
+-- IFNULL 함수(MySQL)
+SELECT IFNULL(height, 'N/A') AS 'NULL_check' FROM `member`;
+
+-- IF 함수
+-- IF(조건식, True일 경우, False일 경우)
+SELECT IF(height IS NOT NULL, height, 'N/A') AS 'NULL_check' FROM `member`;
+
+-- CASE 함수
+SELECT
+	(CASE
+     	WHEN height IS NOT NULL THEN height
+     	ELSE 'N/A'
+     END) AS 'NULL_check'
 FROM `member`;
 ```
 
@@ -69,5 +94,68 @@ FROM `member`;
 ```mysql
 SELECT AVG(age) FROM `member` WHERE age BETWEEN 5 AND 100;
 SELECT * FROM `member` WHERE address NOT LIKE '%호';
+```
+
+<br/>
+
+# Calculate with columns
+
+- NULL이 포함된 계산식의 결과는 항상 NULL
+
+```mysql
+-- BMI지수 계산
+SELECT email, height, weight, weight / ((height/100) * (height/100)) FROM `member`;
+
+-- AS, alias(별명) 
+SELECT 
+	email, 
+	height AS 키, 
+    weight AS 몸무게, 
+    weight / ((height/100) * (height/100)) AS BMI
+FROM `member`;
+
+-- 여러 컬럼값을 연결하기
+SELECT 
+	email, 
+	CONCAT(height, 'cm', ', ', weight, 'kg') AS '키와 몸무게',
+    weight / ((height/100) * (height/100)) AS BMI
+FROM `member`;
+```
+
+<br/>
+
+# CASE 함수
+
+### 1. 단순 CASE 함수
+
+```mysql
+SELECT 
+	email,
+    CASE age
+        WHEN 29 THEN '스물아홉'
+        WHEN 30 THEN '서른'
+        ELSE age
+    END
+FROM `member`;
+```
+
+<br/>
+
+### 2. 검색 CASE 함수
+
+```mysql
+SELECT
+	email, 
+	CONCAT(height, 'cm', ', ', weight, 'kg') AS '키와 몸무게',
+    weight / ((height/100) * (height/100)) AS BMI,
+	(CASE
+		WHEN weight IS NULL OR height IS NULL THEN '비만 여부 알 수 없음'
+		WHEN weight / ((height/100) * (height/100)) >= 25 THEN '과체중 또는 비만'
+		WHEN weight / ((height/100) * (height/100)) >= 18.5
+			AND weight / ((height/100) * (height/100)) < 25 THEN '정상'
+		ELSE '저체중'
+	END) AS obesity_check
+FROM `member`
+ORDER BY obesity_check ASC;
 ```
 
