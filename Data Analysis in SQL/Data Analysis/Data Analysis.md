@@ -159,3 +159,45 @@ FROM `member`
 ORDER BY obesity_check ASC;
 ```
 
+<br/>
+
+# 고유값 함수 DISTINCT
+
+```mysql
+SELECT DISTINCT(gender) FROM `member`;
+SELECT DISTINCT(SUBSTRING(address, 1, 2)) FROM `member`; -- 첫번째 문자부터 2개
+SELECT COUNT(DISTINCT(gender)) FROM `member`; -- 고유값 개수
+SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`; -- 고유값 개수
+```
+
+<br/>
+
+# 문자열 함수
+
+- LENGTH()
+
+  > 문자열 길이를 구해주는 함수
+
+  ```mysql
+  SELECT *, LENGTH(address) FROM `member`;
+  ```
+
+- UPPER(), LOWER()
+
+  > 문자열을 모두 대/소문자로 바꿔주는 함수
+
+  ```mysql
+  SELECT email, UPPER(email) FROM `member`;
+  ```
+
+- LAPD(), RAPD()
+
+  > 문자열의 왼쪽/오른쪽을 특정 문자열로 채워주는 함수
+
+  ```mysql
+  SELECT email, LAPD(age, 10, '0') FROM `member`;
+  ```
+
+- TRIM(), LTRIM(), RTRIM()
+
+  > 
