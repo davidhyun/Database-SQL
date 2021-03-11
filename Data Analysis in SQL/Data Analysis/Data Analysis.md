@@ -208,7 +208,7 @@ SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`;
 
 - `TRIM()`, `LTRIM()`, `RTRIM()`
 
-  > 문자열에 좌우에 존재하는 공백을 제거하는 함수(문자열 내부 공백은 제거X)
+  > 문자열 좌우에 존재하는 공백을 제거하는 함수(문자열 내부 공백은 제거X)
   
   ```mysql
   SELECT LTRIM(word) FROM trim_test;
