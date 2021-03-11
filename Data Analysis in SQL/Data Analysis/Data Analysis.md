@@ -4,12 +4,12 @@
 >
 > NULL값은 제외하고 집계
 
-- COUNT : 개수
-- MAX : 최댓값
-- MIN : 최솟값
-- SUM : 합
-- AVG : 평균값
-- STD : 표준편차
+- `COUNT()` : 개수
+- `MAX()` : 최댓값
+- `MIN()` : 최솟값
+- `SUM()` : 합
+- `AVG()` : 평균값
+- `STD()` : 표준편차
 
 ```mysql
 SELECT MAX(weight) FROM `member`;
@@ -25,11 +25,11 @@ SELECT STD(weight) FROM `member`;
 
 > 산술 함수는 특정 컬럼의 각 row의 값들에 대해 각각 실행될 뿐이다.
 
-- ABS : 절대값
-- SQRT : 제곱근
-- CEIL : 올림
-- FLOOR : 내림
-- ROUND(반올림)
+- `ABS()` : 절대값
+- `SQRT()` : 제곱근
+- `CEIL()` : 올림
+- `FLOOR()` : 내림
+- `ROUND()` : 반올림
 
 ```mysql
 SELECT ABS(height) FROM `member`; -- 절대값
@@ -42,13 +42,17 @@ SELECT FLOOR(height) FROM `member`; -- 내림
 
 # NULL
 
-- `IS NULL`과 `= NULL`을 혼동하지 말아야한다. NULL은 숫자가 아니기 때문에 값과 비교할 수 없다.
-- NULL에는 어떤 연산을 해도 결국 NULL이다.
+> `IS NULL`과 `= NULL`을 혼동하지 말아야한다. NULL은 숫자가 아니기 때문에 값과 비교할 수 없다.
+>
+> NULL에는 어떤 연산을 해도 결국 NULL이다.
 
-1. COALESCE 함수
-2. IFNULL 함수
-3. IF 함수
-4. CASE 함수
+- `COALESCE()`
+
+- `IFNULL()`
+
+- `IF()`
+
+- `CASE()`
 
 ```mysql
 SELECT * FROM `member` WHERE address IS NULL;
@@ -74,7 +78,6 @@ SELECT COALESCE(height, weight * 2.3, 'N/A') AS 'NULL_check' FROM `member`;
 -- IFNULL 함수(MySQL)
 SELECT IFNULL(height, 'N/A') AS 'NULL_check' FROM `member`;
 
--- IF 함수
 -- IF(조건식, True일 경우, False일 경우)
 SELECT IF(height IS NOT NULL, height, 'N/A') AS 'NULL_check' FROM `member`;
 
@@ -166,23 +169,25 @@ ORDER BY obesity_check ASC;
 ```mysql
 SELECT DISTINCT(gender) FROM `member`;
 SELECT DISTINCT(SUBSTRING(address, 1, 2)) FROM `member`; -- 첫번째 문자부터 2개
-SELECT COUNT(DISTINCT(gender)) FROM `member`; -- 고유값 개수
-SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`; -- 고유값 개수
+
+-- 고유값 개수
+SELECT COUNT(DISTINCT(gender)) FROM `member`;
+SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`;
 ```
 
 <br/>
 
 # 문자열 함수
 
-- LENGTH()
+- `LENGTH()`
 
   > 문자열 길이를 구해주는 함수
 
   ```mysql
-  SELECT *, LENGTH(address) FROM `member`;
+  SELECT address, LENGTH(address) FROM `member`;
   ```
 
-- UPPER(), LOWER()
+- `UPPER()`, `LOWER()`
 
   > 문자열을 모두 대/소문자로 바꿔주는 함수
 
@@ -190,14 +195,25 @@ SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`; 
   SELECT email, UPPER(email) FROM `member`;
   ```
 
-- LAPD(), RAPD()
+- `LPAD()`, `RPAD()`
 
   > 문자열의 왼쪽/오른쪽을 특정 문자열로 채워주는 함수
+  >
+  > column type이 숫자이더라도 자동으로 문자열로 형변환되어 함수가 적용된다.
 
   ```mysql
-  SELECT email, LAPD(age, 10, '0') FROM `member`;
+  # age 컬럼의 값 왼쪽에 문자 0을 붙여서 총 10자리로 만드는 함수
+  SELECT age, LPAD(age, 10, '0') FROM `member`;
   ```
 
-- TRIM(), LTRIM(), RTRIM()
+- `TRIM()`, `LTRIM()`, `RTRIM()`
 
-  > 
+  > 문자열에 존재하는 공백을 제거하는 함수(문자열 내부 공백은 제거X)
+  
+  ```mysql
+  SELECT LTRIM(word) FROM trim_test;
+  SELECT RTRIM(word) FROM trim_test;
+  SELECT TRIM(word) FROM trim_test;
+  ```
+  
+  

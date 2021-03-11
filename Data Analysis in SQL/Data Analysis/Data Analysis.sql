@@ -41,7 +41,6 @@ SELECT COALESCE(height, weight * 2.3, 'N/A') AS 'NULL_check' FROM `member`;
 -- IFNULL 함수(MySQL)
 SELECT IFNULL(height, 'N/A') AS 'NULL_check' FROM `member`;
 
--- IF 함수
 -- IF(조건식, True일 경우, False일 경우)
 SELECT IF(height IS NOT NULL, height, 'N/A') AS 'NULL_check' FROM `member`;
 
@@ -101,3 +100,23 @@ SELECT
         ELSE age
     END) AS '29 or 30'
 FROM `member`;
+
+
+-- 고유값 함수 DISTINCT
+SELECT DISTINCT(gender) FROM `member`;
+SELECT DISTINCT(SUBSTRING(address, 1, 2)) FROM `member`; -- 첫번째 문자부터 2개
+-- 고유값 개수
+SELECT COUNT(DISTINCT(gender)) FROM `member`;
+SELECT COUNT(DISTINCT(SUBSTRING(address, 1, 2))) AS region_count FROM `member`;
+
+
+-- 문자열 함수
+SELECT address, LENGTH(address) FROM `member`; -- 문자열 길이
+SELECT email, UPPER(email) FROM `member`; -- 문자열 대문자화
+SELECT email, LOWER(email) FROM `member`; -- 문자열 소문자화
+SELECT age, LPAD(age, 10, '0') FROM `member`; -- 왼쪽에 문자 0을 채워 10자리로
+SELECT age, RPAD(age, 10, '0') FROM `member`; -- 오른쪽에 문자 0을 채워 10자리로
+-- 문자열 좌우 공백 제거
+-- SELECT LTRIM(word) FROM trim_test;
+-- SELECT RTRIM(word) FROM trim_test;
+-- SELECT TRIM(word) FROM trim_test;
