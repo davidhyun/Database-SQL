@@ -120,3 +120,97 @@ SELECT age, RPAD(age, 10, '0') FROM `member`; -- 오른쪽에 문자 0을 채워
 -- SELECT LTRIM(word) FROM trim_test;
 -- SELECT RTRIM(word) FROM trim_test;
 -- SELECT TRIM(word) FROM trim_test;
+
+
+-- GROUP BY
+-- 각 그룹에 속한 행들의 수(COUNT)와 각 그룹별 평균(AVG), 최소값(MIN)이 적용된다.
+SELECT 
+    gender, 
+    COUNT(*), 
+    AVG(height),
+    MIN(weight)
+FROM `member` 
+GROUP BY gender;
+
+-- 여러 컬럼을 기준으로 그룹화
+SELECT 
+    SUBSTRING(address, 1, 2) AS region,
+    gender,
+    COUNT(*)
+FROM `member` 
+GROUP BY SUBSTRING(address, 1, 2), gender;
+
+-- 여러 그룹들 중 region 컬럼이 서울이고 gender가 남성인 것들만 조회
+SELECT 
+    SUBSTRING(address, 1, 2) AS region,
+    gender,
+    COUNT(*)
+FROM `member` 
+GROUP BY SUBSTRING(address, 1, 2), gender
+HAVING region = '서울' AND gender = 'm';
+	
+-- region 컬럼에 값이 있는 그룹들만 정렬해서 조회
+SELECT 
+    SUBSTRING(address, 1, 2) AS region,
+    gender,
+    COUNT(*)
+FROM `member` 
+GROUP BY SUBSTRING(address, 1, 2), gender
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+    
+-- ERROR
+SELECT 
+	SUBSTRING(address, 1, 2) AS region, 
+	gender, 
+	age, -- nonaggregated column
+	COUNT(*) 
+FROM `member`
+GROUP BY SUBSTRING(address, 1, 2), gender
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+
+-- NOT ERROR
+SELECT 
+    SUBSTRING(address, 1, 2) AS region,
+    gender,
+    AVG(age), -- Available
+    COUNT(*)
+FROM `member` 
+GROUP BY SUBSTRING(address, 1, 2), gender
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+
+-- 부분 총계 WITH ROLLUP
+SELECT 
+    SUBSTRING(address, 1, 2) AS region,
+    gender,
+    COUNT(*)
+FROM `member` 
+GROUP BY SUBSTRING(address, 1, 2), gender
+WITH ROLLUP -- 먼저 써준 region이 상위기준
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+
+SELECT 
+	YEAR(birthday) AS b_year,
+	YEAR(sign_up_day) AS s_year,
+	gender,
+	COUNT(*)
+FROM `member`
+GROUP BY YEAR(birthday), YEAR(sign_up_day), gender WITH ROLLUP
+ORDER BY b_year DESC;
+
+-- 결측값 NULL과 부분총계임 NULL을 구분하기 위해 GROUPING 함수 활용
+-- 결측값 NULL이면 0, 부분총계 NULL은 1을 리턴해주는 함수
+SELECT 
+	YEAR(sign_up_day) AS s_year,
+	gender,
+    SUBSTRING(address, 1, 2) AS region,
+    GROUPING(YEAR(sign_up_day)),
+    GROUPING(gender),
+    GROUPING(SUBSTRING(address, 1, 2)),
+	COUNT(*)
+FROM `member`
+GROUP BY YEAR(sign_up_day), gender, SUBSTRING(address, 1, 2) WITH ROLLUP
+ORDER BY s_year DESC;
