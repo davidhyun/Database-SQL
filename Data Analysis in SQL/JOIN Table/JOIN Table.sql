@@ -68,3 +68,23 @@ ON old.id = new.id; -- 두 컬럼 이름이 같다면, ON old.id = new.id 대신
 SELECT * FROM item
 UNION
 SELECT * FROM item_new;
+
+
+-- 서로 다른 3개의 테이블 조인하기
+SELECT 
+	i.name, i.id, 
+	r.item_id, r.star, r.comment, r.mem_id, 
+	m.id, m.email
+FROM item AS i 
+LEFT OUTER JOIN review AS r ON r.item_id = i.id
+LEFT OUTER JOIN `member` AS m ON r.mem_id = m.id;
+
+-- 여성이 구매한 별점 평균이 좋은 상품과 리뷰 수 조회
+SELECT i.id, i.name, AVG(star), COUNT(*)
+FROM item AS i 
+LEFT OUTER JOIN review AS r ON r.item_id = i.id
+LEFT OUTER JOIN `member` AS m ON r.mem_id = m.id
+WHERE m.gender = 'f'
+GROUP BY i.id, i.name
+HAVING COUNT(*) > 1
+ORDER BY AVG(star) DESC, COUNT(*) DESC;

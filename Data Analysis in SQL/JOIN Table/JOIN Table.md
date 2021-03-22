@@ -98,6 +98,39 @@ ON old.id = new.id;
 
 <br/>
 
+### 1:1 관계, 1:N 관계
+
+> 이전에 item 테이블과 stock 테이블 조인에서는 하나의 '상품'이 한건의 '재고 수' 정보를 갖는 **1:1 관계**였기 때문에 동일한 상품 이름이 여러번 등장하지 않았다.
+>
+> 반면에 하나의 '상품'에는 여러개의 '리뷰'가 달릴 수 있는데 이런 것을 **1:N 관계**라고 한다. item 테이블을 기준으로 review 테이블을 LEFT OUTER JOIN하면 하나의 상품에 여러개의 리뷰를 연결해서 표현해줄 수 있다. 그래서 하나의 상품에 대해서 그 id 값과 일치하는 item_id 값을 가진 리뷰라면 모두 연결되어, 동일한 상품 이름이 여러번 표시된 것이다.
+
+<img src="https://user-images.githubusercontent.com/64063767/111995655-83d5a180-8b5c-11eb-8731-2d765eb89249.png" alt="image" style="zoom: 50%;" />
+
+```mysql
+-- 서로 다른 3개의 테이블 조인하기
+SELECT 
+	i.name, i.id, 
+	r.item_id, r.star, r.comment, r.mem_id, 
+	m.id, m.email
+FROM item AS i 
+LEFT OUTER JOIN review AS r ON r.item_id = i.id
+LEFT OUTER JOIN `member` AS m ON r.mem_id = m.id;
+```
+
+```mysql
+-- 여성이 구매한 별점 평균이 좋은 상품과 리뷰 수 조회
+SELECT i.id, i.name, AVG(star), COUNT(*)
+FROM item AS i 
+LEFT OUTER JOIN review AS r ON r.item_id = i.id
+LEFT OUTER JOIN `member` AS m ON r.mem_id = m.id
+WHERE m.gender = 'f'
+GROUP BY i.id, i.name
+HAVING COUNT(*) > 1
+ORDER BY AVG(star) DESC, COUNT(*) DESC;
+```
+
+<br/>
+
 # 4. UNION, INTERSECT, MINUS (집합 연산)
 
 > **MySQL에서는 UNION만 지원**한다. (ORACLE에서는 UNION, INTERSECT, MINUS 모두 지원)
@@ -127,5 +160,110 @@ SELECT * FROM member_B
 SELECT * FROM member_A 
 MINUS
 SELECT * FROM member_B
+```
+
+<br/>
+
+# 5. Other JOIN
+
+### (1) NATURAL JOIN
+
+> NATURAL JOIN(자연 조인)은 두 테이블에서 같은 이름의 컬럼을 찾아서 자동으로 조인 조건으로 설정하고 INNER JOIN해주는 역할을 한다. 테이블 구조를 모른다면 어떤 컬럼들을 기준으로 조인되었는지 알 수 없기 때문에 ON 절에 조인 조건을 명시하는 것을 권장한다. 
+
+```mysql
+SELECT p.id, p.player_name, p.team_name, t.team_name, t.region
+FROM player AS p 
+INNER JOIN team AS t ON p.team_name = t.team_name;
+
+SELECT p.id, p.player_name, p.team_name, t.team_name, t.region
+FROM player AS p 
+NATURAL JOIN team AS t;
+```
+
+### (2) CROSS JOIN
+
+> 한 테이블의 하나의 row에 다른 테이블의 모든 row들을 매칭하고, 다음 row에서도 다른 테이블의 모든 row들을 매칭하는 것을 반복함으로써 두 테이블의 row들의 모든 조합을 볼 수 있는 조인이다. 집합의 모든 원소들의 조합을 나타내는 것을 수학 집합이론에서는 카르테시안 곱(Cartesian Product)라고 한다.
+
+<img src="https://user-images.githubusercontent.com/64063767/112001425-4ecc4d80-8b62-11eb-9f1d-e839bfe74cc4.png" alt="image" style="zoom:50%;" />
+
+```mysql
+SELECT * FROM member CROSS JOIN stock;
+```
+
+### (3) SELF JOIN
+
+> 테이블이 자기 자신과 조인을 하는 경우를 말한다. 서로 별개인 두 테이블을 조인하는 것처럼 생각하면 된다.
+
+<img src="https://user-images.githubusercontent.com/64063767/112002555-5b04da80-8b63-11eb-90be-a068b5cd65fe.png" alt="image" style="zoom:50%;" />
+
+<img src="https://user-images.githubusercontent.com/64063767/112002749-91425a00-8b63-11eb-92ff-5540af550bb0.png" alt="image" style="zoom:50%;" />
+
+```mysql
+SELECT * FROM FOR_TEST.employee;
+
+SELECT *
+FROM employee AS e1
+LEFT OUTER JOIN employee AS e2 ON e1.boss = e2.id;
+
+SELECT *
+FROM employee AS e1
+LEFT OUTER JOIN employee AS e2 ON e1.boss = e2.id
+LEFT OUTER JOIN employee AS e3 ON e2.boss = e3.id;
+```
+
+### (4) FULL OUTER JOIN
+
+> 두 테이블의 LEFT OUTER JOIN 결과와 RIGHT OUTER JOIN 결과를 합치는 조인이다. 이 때 두 결과에 모두 존재하는 공통 row들은 한번만 나타낸다.
+
+| LEFT OUTER JOIN + <br />RIGHT OUTER JOIN                     | UNION ALL                                                    | UNION                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <img src="https://user-images.githubusercontent.com/64063767/112003739-85a36300-8b64-11eb-984f-2579d0be1d48.png" alt="image" style="zoom:50%;" /> | <img src="https://user-images.githubusercontent.com/64063767/112004009-c00d0000-8b64-11eb-811c-7ac4a975fd13.png" alt="image" style="zoom:50%;" /> | <img src="https://user-images.githubusercontent.com/64063767/112004073-d024df80-8b64-11eb-85b4-45292f7990e9.png" alt="image" style="zoom:50%;" /> |
+
+```mysql
+SELECT *
+FROM player AS p
+LEFT OUTER JOIN team AS t ON p.team_name = t.team_name;
+
+SELECT *
+FROM player AS p
+LEFT OUTER JOIN team AS t ON p.team_name = t.team_name
+UNION ALL
+SELECT *
+FROM player AS p 
+RIGHT OUTER JOIN team AS t ON p.team_name = t.team_name;
+
+SELECT *
+FROM player AS p
+LEFT OUTER JOIN team AS t ON p.team_name = t.team_name
+UNION
+SELECT *
+FROM player AS p
+RIGHT OUTER JOIN team AS t ON p.team_name = t.team_name;
+```
+
+```mysql
+-- ORACLE
+SELECT *
+FROM player AS p
+FULL OUTER JOIN team AS t ON p.team_name = t.team_name;
+```
+
+### (5) Non-Equi 조인
+
+> 지금까지 조인 조건을 설정할 때 두 컬럼의 값이 같은지를 기준으로 했다. 이렇게 조인 조건에 항상 등호(=)를 사용한 조인을 Equi 조인이라고 한다.
+>
+> 하지만 동등 조건이 아닌 다른 종류의 조건을 사용해서도 조인을 할 수 있다. 이러한 조인을 **Non-Equi 조인**이라고 한다. 특정 회원이 가입한 이후에 사이트에 올라온 상품들이 무엇인지 확인할 수 있다.
+
+<img src="https://user-images.githubusercontent.com/64063767/112005355-057dfd00-8b66-11eb-91b1-19690f447968.png" alt="image" style="zoom:50%;" />
+
+```mysql
+SELECT 
+    m.email, 
+    m.sign_up_day, 
+    i.name, 
+    i.registration_date
+FROM `member` AS m
+LEFT OUTER JOIN item AS i ON m.sign_up_day < i.registration_date
+ORDER BY m.sign_up_day ASC;
 ```
 
