@@ -119,8 +119,8 @@ WHERE price > ALL(SELECT price FROM item WHERE gender = 'm');
 -- FROM 절 안의 서브쿼리
 SELECT
 	AVG(review_count),
-    MAX(review_count),
-    MIN(review_count)
+	MAX(review_count),
+	MIN(review_count)
 FROM
 (SELECT
 	SUBSTRING(address, 1, 2) AS region,
