@@ -69,8 +69,20 @@ FROM
 	SUBSTRING(address, 1, 2) AS region,
     COUNT(*) AS review_count
 FROM review AS r
-LEFT OUTER JOIN member AS m
+LEFT OUTER JOIN `member` AS m
 ON r.mem_id = m.id
 GROUP BY SUBSTRING(address, 1, 2)
 HAVING region IS NOT NULL
 AND region != '안드') AS review_count_summary;
+
+-- 상관 서브쿼리(Correlated Subquery)
+SELECT
+    MAX(copang_report.price) AS max_price,
+    AVG(copang_report.star) AS avg_star,
+    COUNT(DISTINCT(copang_report.email)) AS distinct_email_count
+FROM (
+SELECT i.price, r.star, m.email
+FROM review AS r
+INNER JOIN `member` AS m ON m.id = r.mem_id
+INNER JOIN item AS i ON i.id = r.item_id
+) AS copang_report;
