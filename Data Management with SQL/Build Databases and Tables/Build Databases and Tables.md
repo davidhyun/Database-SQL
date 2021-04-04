@@ -1,0 +1,246 @@
+# Build Databases and Tables
+
+## Create Database
+
+```mysql
+CREATE DATABASE IF NOT EXISTS course_rating;
+```
+
+<br/>
+
+## Create Table
+
+> 테이블 생성시, 각 컬럼에 적절한 데이터 타입을 설정해주는 것은 아주 중요하다. 나중에 row가 많아졌을 때 성능에 영향을 미치기도 하기 때문이다. 데이터 타입을 잘 설정해야 저장 용량을 효율적으로 활용할 수 있다.
+>
+> 데이터베이스 이름, 테이블 이름, 컬럼 이름 등에 사용된 \` 기호는 백틱(backtick)이라고 한다. DBMS에서는 **데이터베이스, 테이블, 컬럼 등과 같은 구성요소를 보통 object(객체)**라고 하고 이런 object에 붙여준 이름을 identifier(식별자)라고 한다. 즉 MySQL에서 **백틱은 해당 단어가 identifier임을 나타내는 기호**이다. 백틱을 굳이 쓰지 않아도 SQL 문은 보통 잘 실행되기도 하는데 백틱을 쓰면 어느 단어가 사용자가 직접 이름을 지은 부분인지 보다 확실하게 나타낼 수 있다. 또한, **SQL 문법에 이미 정해진 키워드(Reserved Words)로 이름을 짓고 싶을 때는 백틱을 필수로 써줘야한다.**
+
+<img src="https://user-images.githubusercontent.com/64063767/113477030-3b9e7380-94ba-11eb-9648-1eaf9f16d8d5.png" alt="image" style="zoom: 67%;" />
+
+<img src="https://user-images.githubusercontent.com/64063767/113477061-6b4d7b80-94ba-11eb-866f-1a5426dc83de.png" alt="image" style="zoom: 80%;" />
+
+```mysql
+USE course_rating;
+
+-- DDL(Data Definition Language)
+CREATE TABLE `course_rating`.`student` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(20) NULL,
+  `student_number` INT NULL,
+  `major` VARCHAR(15) NULL,
+  `email` VARCHAR(50) NULL,
+  `phone` VARCHAR(15) NULL,
+  `admission_date` DATE NULL,
+  PRIMARY KEY (`id`));
+  
+CREATE TABLE `course_rating`.`student` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(20) NULL,
+  `student_number` INT NULL,
+  `major` VARCHAR(15) NULL,
+  `email` VARCHAR(50) NULL,
+  `phone` VARCHAR(15) NULL,
+  `admission_date` DATE NULL);
+```
+
+<br/>
+
+### (1) Numeric types(숫자형 타입)
+
+> 숫자를 나타내기 위해 사용되는 데이터 타입으로 정수형과 실수형으로 나뉜다.
+
+1. #### 정수형 타입
+
+   > 정수값을 저장하는 타입으로 나타낼 수 있는 정수값의 범위에 차이가 있다.
+   >
+   > SIGNED는 부호가 있는 '양수', '0', '음수'를 나타내고, UNSIGNED는 부호를 표시하지 않는 '0'과 '양수'를 나타낸다.
+
+   - #### `TINYINT`
+
+     - 작은 범위의 정수들을 저장할 때 쓰는 데이터 타입
+     - TINYINT SIGNED (TINYINT default) : -128 ~ 127
+     - TINYINT UNSIGNED : 0 ~ 255
+
+   - #### `SMALLINT`
+
+     - TINYINT 보다 좀 더 큰 범위의 정수를 나타낼 때 쓰는 데이터 타입
+     - SMALLINT SIGNED : -32768 ~ 32767
+     - SMALLINT UNSIGNED : 0 ~ 65535
+
+   - #### `MEDIUMINT`
+
+     - MEDIUMINT SIGNED : -8388608 ~ 8388607
+     - MEDIUMINT UNSIGNED : 0 ~ 16777215
+
+   - #### `INT`
+
+     - INT SIGNED : -2147483648 ~ 2147483647
+     - INT UNSIGNED : 0 ~ 4294967295
+
+   - #### `BIGINT`
+
+     - BIGINT SIGNED : -9223372036854775808 ~ 9223372036854775807
+     - BIGINT UNSIGNED : 0 ~ 18446744073709551615
+
+<br/>
+
+1. #### 실수형 타입
+
+   > 소수점이 붙어있는 수를 나타내기 위한 데이터 타입으로 소수점 뒤에 얼마나 많은 자리수를 표현할 수 있는지에 따라 세분화할 수 있다.
+
+   - #### `DECIMAL`
+
+     - 일반적으로 자주 쓰이는 실수형 타입으로 보통 DECIMAL(M, D)형식으로 나타낸다. 여기에서 M은 최대로 쓸 수 있는 전체숫자의 자리수이고, D는 최대로 쓸 수 있는 소수점 뒤에 있는 자리 수를 의미한다.
+     - DECIMAL(5, 2) : -999.99 ~ 999.99
+     - M은 최대 65, D는 30까지 값을 가질 수 있다.
+     - DECIMAL 대신 `DEC`, `NUMERIC`, `FIXED`를 써도 된다.
+
+   - #### `FLOAT`
+
+     - -3.402823466E+38 ~ -1.175494351E-38
+     - 0
+     - 1.175494351E-38 ~ 3.402823466E+38
+
+   - #### `DOUBLE`
+
+     - -1.7976931348623157E+308 ~ -2.2250738585072014E-308
+     - 0
+     - 2.2250738585072014E-308 ~ 1.7976931348623157E+308
+
+<br/>
+
+### (2) Date and Time types(날짜 및 시간형 타입)
+
+> 데이터베이스에서는 날짜 및 시간 정보를 다루는 경우가 많다.
+>
+> UTC(Coordinated Universal Time)는 국제 사회에서 통용되는 표준 시간 체계로 '국제표준시'라고도 한다. UTC는 영국런던을 기준으로하며 우리나는 런던을 기준으로 9시간이 더 빠르기 때문에 우리나라 시간은 UTC+9로 표현한다.
+
+1. #### `DATE`
+
+   - 날짜를 저장하는 데이터 타입
+   - '2020-03-26' (연, 월, 일)
+
+2. #### `DATETIME`
+
+   - 날짜와 시간을 저장하는 데이터 타입
+   - '2020-03-26 09:30:27' (연, 월, 일, 시, 분, 초)
+
+3. #### `TIMESTAMP`
+
+   - 날짜와 시간을 저장하는 데이터 타입
+
+   - '2020-03-26 09:30:27' (연, 월, 일, 시, 분, 초)
+
+   - time_zone 정보도 함께 저장한다.
+
+     ```mysql
+     SET time_zone = '-11:00';
+     ```
+
+4. #### `TIME`
+
+   - 시간을 나타내는 데이터 타입
+   - '09:27:31' (시:분:초)
+
+<br/>
+
+### (3) String types(문자열 타입)
+
+> `CHAR` VS `VARCHAR`
+>
+> [CHAR와 VARCHAR 비교 및 특징](https://goodgid.github.io/JS-char-vs-varchar/)
+>
+> [VARCHAR, CHAR 성능 상의 차이점](https://dog-foot-story.tistory.com/100)
+
+1. #### `CHAR`
+
+   - 문자열을 나타내는 기본 타입
+   - **고정 길이 타입**으로 어떤 문자열이 저장되더라도 항상 그 값이 괄호안에 고정된 값만큼 저장 용량을 차지한다. 값의 길이가 비슷비슷한 컬럼에는 CHAR 타입을 사용 권장한다. 
+     (ex. 주민등록번호)
+   - CHAR(30) : CHAR 타입의 괄호안의 숫자는 문자를 최대 몇 자까지 저장할 수 있는지를 나타내고 0 ~ 255까지의 숫자를 입력할 수 있다.
+
+2. #### `VARCHAR`
+
+   - **가변 길이 타입**으로 저장 용량이 설정된 최대 길이에 맞게 고정되는 것이 아니라 실제 저장된 값에 맞게 최적화 된다. 대신 해당 값의 사이즈를 나타내는 부분(1byte or 2byte)이 저장 용량에 추가된다. **길이가 들쑥날쑥한 컬럼은 VARCHAR 타입을 쓰는 것이 좋다.**
+
+   - VARCHAR(30) : VARCHAR 타입의 괄호 안에는 0 ~ 65,535 (2^16 - 1)까지 의 숫자를 입력할 수 있다.
+
+3. #### `TEXT`
+
+   - TEXT 타입은 최대 65535자 까지 저장할 수 있다.
+   - `MEDIUMTEXT` : 16,777,215(2^24 -1)자 까지 저장할 수 있다.
+   - `LONGTEXT` : 4,294,967,295(2^32 -1)자 까지 저장할 수 있다.
+
+<br/>
+
+## INSERT INTO VALUES
+
+> 테이블에 새로운 데이터(row)를 추가하는 SQL 문
+>
+> `INSERT INTO {table_names} VALUES {values};` 
+
+```mysql
+-- 데이터 삽입
+INSERT INTO student
+	(id, name, student_number, major, email, phone, admission_date)
+    VALUES (1, '성태후', 20142947, '컴퓨터공학과', 'taehos@naver.com', '010-5678-1234', '2014-03-12');
+
+-- 데이터를 추가할 열을 지정하지 않으면 모든 열에 추가
+INSERT INTO student
+    VALUES (2, '김소원', 20130912, '화학과', 'sungso@google.com', '010-5678-2323', '2013-03-07');
+    
+-- 특정 열에만 데이터 추가
+INSERT INTO student
+	(id, name, student_number, major, admission_date)
+    VALUES (3, '이현승', 20111025, '법학과', '2011-03-02');
+    
+-- auto_increment 속성이 있는 컬럼은 이전 row의 id값보다 1이 큰 고유값을 자동으로 추가
+INSERT INTO student
+	(name, student_number, major, admission_date)
+    VALUES ('정유진', 20160843, '빅데이터학과', '2016-03-15');
+```
+
+<br/>
+
+## UPDATE SET WHERE
+
+> 테이블의 데이터를 갱신(수정)하는 SQL 문
+>
+> `UPDATE {table_name} SET {column=value} WHERE {column=value};`
+
+```mysql
+-- 데이터 갱신
+UPDATE student 
+	SET major = '멀티미디어학과', name = '차소원'
+	WHERE id = 2;
+	
+-- 모든 열의 데이터 갱신
+UPDATE final_exam_result SET score = score + 3;
+```
+
+<br/>
+
+## DELETE FROM WHERE
+
+> 테이블의 데이터를 삭제하는 SQL 문
+>
+> `DELETE FROM {table_name} WHERE {column=value};`
+
+```mysql
+DELETE FROM student WHERE id = 4;
+```
+
+### 물리 삭제 VS 논리 삭제
+
+> row를 바로 삭제해버리는 것을 **'물리 삭제'**라고 한다. 반면에 삭제해야할 row를 삭제하지 않고, '삭제 여부'를 나타내는 별도의 컬럼을 두고 거기에 '삭제됐음'을 나타내는 값을 넣는 것을 **'논리 삭제'**라고 한다.
+>
+> 논리 삭제는 데이터를 보존하여 향후 활용에도 도움이 되는 장점이 있지만, 삭제되지 않고 유효한 row들만 조회할 때 `SELECT * FROM WHERE is_cancelled != 'Y';` 처럼 WHERE 절에 별도의 조건을 추가해줘야한다는 번거로운 단점이 있다. 또한, 물리적인 삭제가 아니기 때문에 저장용량이 줄어들지 않는다는 단점도 있다. 때문에 이런 단점을 보완하기 위해 기본 정책은 논리 삭제로 두되, 이미 데이터 분석에 활용되었거나 고객이 동의한 데이터 보유기간이 지난 데이터들은 정기적으로 물리 삭제하는 방법을 활용하기도 한다.
+
+```mysql
+-- 쇼핑몰 고객 주문 내역 삭제
+-- 물리 삭제
+DELETE FROM order WHERE id = 2; 
+
+-- 논리 삭제
+UPDATE order SET is_cancelled = ‘Y’ WHERE id = 4;
+```
+
