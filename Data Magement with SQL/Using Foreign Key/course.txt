@@ -1,0 +1,9 @@
+INSERT INTO course (title, semester, maximum, professor) VALUES ('프로그래밍 기초:파이썬', '1-1', 70, '강명훈');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('자료구조와 알고리즘', '2-1', 60, '성태희');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('컴퓨터 개론', '1-1', 100, '손동민');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('데이터 사이언스 입문', '3-1', 60, '최지욱');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('객체 지향 프로그래밍', '3-2', 50, '김현수');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('머신러닝', '3-2', 40, '하우재');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('웹의 기본', '2-2', 50, '강소원');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('유닉스 시스템', '3-1', 40, '이규리');
+INSERT INTO course (title, semester, maximum, professor) VALUES ('SQL 기초와 활용', '4-1', 40, '민종훈');
