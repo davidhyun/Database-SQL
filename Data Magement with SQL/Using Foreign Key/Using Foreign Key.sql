@@ -37,3 +37,23 @@ CREATE TABLE `review` (
   KEY `fk_review_table` (`course_id`),
   CONSTRAINT `fk_review_table` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- 참조 무결성(Referential Integrity)
+-- 참조무결성을 훼손하는 새로운 row 추가
+INSERT INTO review (course_id, star, comment) VALUES (10, 5, "이 강의 최고!");
+
+-- 참조무결성을 위배하지 않는 새로운 row 추가
+INSERT INTO review (course_id, star, comment) VALUES (8, 5, "이 강의 최고!");
+
+-- RESTRICT 정책 설정 후 삭제 또는 변경
+DELETE FROM course WHERE id = 5;
+UPDATE COURSE SET id = 100 WHERE id = 1;
+
+-- CASCADE 정책 설정 후 삭제 또는 변경
+DELETE FROM course WHERE id = 5;
+UPDATE COURSE SET id = 100 WHERE id = 1;
+
+-- SET NULL 정책 설정 후 삭제 또는 변경
+DELETE FROM course WHERE id = 2;
+UPDATE COURSE SET id = 200 WHERE id = 100;
