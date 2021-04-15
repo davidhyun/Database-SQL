@@ -33,7 +33,7 @@ CREATE TABLE course_rating.review (
 DESCRIBE review;
 ```
 
-
+<br/>
 
 ## Foreign Key 설정
 
@@ -67,6 +67,12 @@ CREATE TABLE `review` (
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
+
+<br/>
+
+## 논리적 Foreign Key & 물리적 Foreign Key
+
+작성중...
 
 <br/>
 
