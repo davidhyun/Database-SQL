@@ -38,6 +38,20 @@ CREATE TABLE `review` (
   CONSTRAINT `fk_review_table` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Foreign Key 삭제
+SHOW CREATE TABLE review;
+ALTER TABLE review DROP FOREIGN KEY fk_review_table;
+/*
+review, CREATE TABLE `review` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `course_id` int DEFAULT NULL,
+  `star` int DEFAULT NULL,
+  `comment` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_review_table` (`course_id`),
+  CONSTRAINT `fk_review_table` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+*/
 
 -- 참조 무결성(Referential Integrity)
 -- 참조무결성을 훼손하는 새로운 row 추가

@@ -70,9 +70,25 @@ CREATE TABLE `review` (
 
 <br/>
 
-## 논리적 Foreign Key & 물리적 Foreign Key
+## Foreign Key 삭제
 
-작성중...
+```mysql
+-- 제약사항 확인
+SHOW CREATE TABLE review;
+ALTER TABLE review DROP FOREIGN KEY fk_review_table;
+
+/*
+review, CREATE TABLE `review` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `course_id` int DEFAULT NULL,
+  `star` int DEFAULT NULL,
+  `comment` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_review_table` (`course_id`),
+  CONSTRAINT `fk_review_table` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+*/
+```
 
 <br/>
 
@@ -146,3 +162,31 @@ UPDATE COURSE SET id = 100 WHERE id = 1;
 DELETE FROM course WHERE id = 2;
 UPDATE COURSE SET id = 200 WHERE id = 100;
 ```
+
+<br/>
+
+## 논리적 Foreign Key & 물리적 Foreign Key
+
+많은 테이블들이 Foreign Key를 매개로 관계를 맺고 있고, 여러 테이블들을 하나로 합치는 조인9Join)을 이 Foreign Key 기준으로 하는 것이 일반적이기 때문에, 현재 데이터베이스에 존재하는 Foreign Key들을 잘 파악하는 것이 중요하다.
+
+하지만 실무에서 데이터베이스의 테이블들을 살펴보다 보면 **어떤 테이블의 특정 컬럼이 Foreign Key로 설정되어야할 것 같은데 Foreign Key로 설정되지 않은 경우를 보게될 수 있다.** 어떤 테이블의 한 컬럼이 논리적으로는 다른 테이블의 컬럼을 참조해야해서 개념상 Foreign Key에 해당하는 것과, 실제로 해당 컬럼을 Foreign Key로 설정해서 두 테이블 간의 참조 무결성을 지킬 수 있게되는 것은 별개의 개념이다. 그래서 보통 이 둘을 나누어 **개념상, 논리적으로 성립하는 Foreign Key**를 `논리적(Logical) Foreign Key`라고 하고, **DBMS 상에서 실제로 특정 컬럼을 Foreign Key로 설정**해서 두 테이블 간의 참조 무결성을 보장할 수 있게 됐을 때, 그 컬럼을 `물리적(Physical) Foreign Key`라고 한다. 실무에서 논리적 Foreign Key라고 해서 꼭 그것을 물리적 Foreign Key로 설정하는 것은 아니다. 물리적 Foreign Key로 설정하면 참조 무결성이 보장되니까 좋을텐데 왜 설정하지 않는 것일까?
+
+<br/>
+
+### 1. 성능 문제
+
+실제 서비스에 의해 사용되고 있는 데이터베이스의 테이블들은 단 1초 내에도 수많은 조회(SELECT), 추가(INSERT), 수정(UPDATE), 삭제(DELETE) 작업이 일어나고 있을 수 있다. 이럴 때 SQL 문 하나하나가 얼마나 빨리 실행되는지가 사용자의 만족도에 큰 영향을 미친다.
+
+**물리적 Foreign Key가 있는 자식 테이블의 경우에는 INSERT, UPDATE 문 등이 실행될 때 약간의 속도 저하가 발생할 가능성이 있다.** 왜냐하면 INSERT, UPDATE 문이 실행될 때 혹시라도 **참조 무결성을 깨뜨리는 변화가 발생하지 않을지 추가적으로 검증해줘야하기 때문**이다. 즉 물리적 Foreign Key를 설정하게 되면, 데이터의 참조 무결성을 보장해주는 대신, 성능 부분에서는 약간의 양보가 필요한 것이다.
+
+만약 데이터의 참조 무결성보다는 일단 당장 빠른 성능이 중요하다면 물리적 Foreign Key를 굳이 설정하지 않기도 한다. 그리고 이렇게 일단은 INSERT, UPDATE 문 등이 보다 더 빠르게 실행되도록 하고, 참조 무결성을 어기는 데이터들은 정기적으로 별도의 확인 후에 삭제해주는 방식을 택하기도 한다.
+
+<br/>
+
+### 2. 레거시(Legacy) 데이터의 참조 무결성이 이미 깨진 상태라면?
+
+Legacy는 "유물", "유산"이라는 뜻으로 IT 직무에서는 프로그램의 **기존 코드**, **기존 데이터** 등을 나타낼 때 사용하는 말이다.
+
+이미 레거시 데이터의 참조 무결성이 깨져버려서 복구하기 힘든 실무에서의 현실적인 이유로 물리적 Foreign Key없이, 참조 무결성을 지키는 것을 포기하고 서비스를 운영하는 곳들도 생겨나게 된다. 참조 무결성이 깨지더라도 일단 소중한 데이터들을 삭제하지 않기 위해서 말이다.
+
+하지만 데이터의 참조 무결성을 완벽하게 지켜야하는 서비스(은행, 학적관리 서비스 등)에서는 논리적 Foreign Key를 반드시 물리적 Foreign Key로 설정해야한다.
