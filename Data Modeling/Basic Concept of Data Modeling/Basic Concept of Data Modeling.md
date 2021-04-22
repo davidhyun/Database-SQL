@@ -53,6 +53,7 @@
 ## Entity Relationship Model(ERM)
 
 - 모델링할 때는 row에 대해서 신경쓰지 않고 개체와 관계를 중심으로 표현한 ERM 모델을 사용한다.
+- ERM을 **ERD(Entity Relationship Diagram)**로 표현하기도 한다.
 
 <img src="https://user-images.githubusercontent.com/64063767/115251608-a9f35f00-a165-11eb-91a8-f4b6286486d5.png" alt="image" style="zoom: 50%;" />
 
