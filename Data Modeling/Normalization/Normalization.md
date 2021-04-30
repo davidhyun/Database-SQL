@@ -34,7 +34,7 @@
 
 ### (1) 1NF
 
-- 테이블 안 모든 row의 모든 column 값들은 나눌 수 없는 **단일 값**이어야 한다.
+- **테이블 안 모든 row의 모든 column 값들은 나눌 수 없는 <span style='color:red;'>단일 값</span>이어야 한다.**
 
 - 조회하거나 수정이 복잡해질 수 있기 때문에 하나의 컬럼에 여러값을 두지 않는다.
 
@@ -52,13 +52,13 @@
 
 테이블 안 Attribute들 사이에서 생기는 관계로 X의 값에 따라서 Y의 값이 결정될 때 Y는 X에 함수 종속성이 있다고 한다.
 
-- x -> y
+- #### x -> y
 
   | email -> {name, age, gender}                                 | {user, product} -> score                                     |
   | ------------------------------------------------------------ | ------------------------------------------------------------ |
   | <img src="https://user-images.githubusercontent.com/64063767/116711734-1b58ca80-aa0e-11eb-9705-404a4b6c1554.png" alt="image" style="zoom:50%;" /> | <img src="https://user-images.githubusercontent.com/64063767/116712119-7d193480-aa0e-11eb-8eb7-36ca6e16f2b5.png" alt="image" style="zoom:50%;" /> |
 
-- x -> y-> z (이행성)
+- #### x -> y-> z (이행성)
 
   product -> brand -> brand_country
 
@@ -66,4 +66,61 @@
 
 <br/>
 
+### Candidate Key
+
+- 하나의 row를 특정지을 수 있는 attribute들의 **최소 집합**
+
+- row를 특정짓는데 사용되지 않는 attribute는 Candidate Key에 포함될 수 없다.
+
+| Candidate Key1                                               | Candidate Key2                                               |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <img src="https://user-images.githubusercontent.com/64063767/116713679-fb2a0b00-aa0f-11eb-8166-eaa4992c2e53.png" alt="image" style="zoom:50%;" /> | <img src="https://user-images.githubusercontent.com/64063767/116713841-20b71480-aa10-11eb-8fd3-96c1fbd6a6c3.png" alt="image" style="zoom:50%;" /> |
+
+<img src="https://user-images.githubusercontent.com/64063767/116714256-886d5f80-aa10-11eb-887f-7528af8d20dd.png" alt="image" style="zoom:50%;" />
+
+
+
+<br/>
+
 ### (2) 2NF
+
+- 1NF에 부합해야 한다.
+
+- 테이블에 Candidate Key의 일부분에 대해서만 함수 종속성이 있는 non-prime attribute가 없어야 한다.
+
+  | Issue                                                        | Solution                                                     |
+  | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | <img src="https://user-images.githubusercontent.com/64063767/116715673-e2225980-aa11-11eb-8193-6464d27d6645.png" alt="image"  /> | <img src="https://user-images.githubusercontent.com/64063767/116715886-172eac00-aa12-11eb-9bb4-0f801a36efec.png" alt="image" style="zoom:50%;" /> |
+
+<br/>
+
+### (3) 3NF
+
+- 1NF에 부합해야 한다.
+
+- 2NF에 부합해야 한다.
+
+- 테이블 안에 있는 모든 attribute들은 오직 Primary Key에 대해서만 함수 종속성이 있어야 한다.
+  (테이블의 모든 attribute는 직접적으로 테이블 Entitty에 대한 내용이어야만 한다)
+
+- **이행적 함수 종속성이 존재하면 안된다.**
+
+  | Issue                                                        | Solution                                                     |
+  | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | <img src="https://user-images.githubusercontent.com/64063767/116716810-24986600-aa13-11eb-812e-fafd3e489763.png" alt="image" style="zoom:50%;" /> | <img src="https://user-images.githubusercontent.com/64063767/116717016-60333000-aa13-11eb-973c-466e252460d6.png" alt="image" style="zoom:50%;" /> |
+
+<br/>
+
+# Denormalization(비정규화, 반정규화)
+
+- **성능 개선을 위해서** 정규형에 부합하는 테이블을 정규형을 지키지 않게 바꾸는 것을 의미한다.
+
+- 정규화로 데이터가 이곳저곳 너무 많이 퍼져있으면, 퍼져있는 데이터를 다시 모을 때 속도가 느려질 수 있다.
+
+- 비정규화 조건
+
+  1. 데이터가 너무 퍼져있어서 조회 성능 문제가 심각한 수준일 경우
+  2. 테이블을 삽입, 업데이트, 삭제하는 것보다 조회하는 용도로만 사용하고 있을때
+
+  이 두 경우에만 비정규화를 고려할 수 있다.
+
