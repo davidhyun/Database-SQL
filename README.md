@@ -20,7 +20,7 @@
 
 > 데이터를 추가/수정/삭제하기 위한, 즉 **데이터 관리를 위한** 언어
 >
-> `SELECT`, `INSERT`, `UPDATE`, ...
+> `SELECT`, `INSERT`, `UPDATE`, `DELETE`,...
 
 <br/>
 
