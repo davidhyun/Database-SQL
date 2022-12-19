@@ -1,8 +1,60 @@
+# Database
+
+## Database
+
+> "일정한 체계 속에 저장된 데이터의 집합"
+
+- 하나의 컴퓨터에서도 여러 개의 데이터베이스를 생성할 수 있고, 하나의 데이터베이스 안에서 여러 개의 테이블을 만들 수도 있다.
+
+- 테이블에서 **하나의 개체**를 나타내는 것은 **row**, 
+
+  **개체의 각 속성(attribute)**을 나타내는 것은 **column**이다.
+
+  테이블의 **행**을 **레코드(record)**, **열**을 **필드(field)**라고도 한다.
+
+- MySQL을 비롯한 DBMS들이 **'Server-Client'** 구조로 동작한다.
+
+  서버의 역할을 하는 하나의 프로그램이 실행되고 있고, 사용자는 클라이언트 역할을 하는 프로그램으로 해당 서버에 접속하고, 그 서버에 SQL로 명령을 내리는 구조인 것
+
+<br/>
+
+## DBMS
+
+- 은행, 거래소 등과 같이 데이터 처리의 정확성, 운영의 안정성 등이 엄격하게 요구되는 분야에서는 Oracle이 주로 사용되고 있고, 우리가 흔히 쓰는 앱, 웹 사이트 같은 서비스를 만들 때는 MySQL을 쓰는 경우가 많다. MySQL은 무료로 사용할 수 있고 좀 더 가볍다는 장점이 있다.
+
+- MySQL은 여러 DBMS 중에서도 특히 일반 사용자가 사용하기 편하다는 평가를 받는다. 그리고 간단히 사용해볼 때 요구하는 컴퓨터 성능도 작은편이라 부담도 덜하다.
+
+<br/>
+
+## Server-Client
+
+1. **server(서버 프로그램)**
+   - client로부터 SQL문 등을 전달받아 데이터베이스 관련 작업을 직접 처리하는 프로그램
+   - MySQL에서 서버 프로그램 이름은 **'mysqld'**, 이 프로그램이 실행되고 있을 때 사용자가 클라이언트 프로그램을 사용해서 접속하면 된다.
+2. **client(클라이언트 프로그램)**
+   - 사용자가 server에 접속해서 원하는 데이터베이스 관련 작업을 할 수 있도록, SQL을 입력할 수 이는 화면 등을 제공하는 프로그램
+   - MySQL의 클라이언트 프로그램 이름은 **'mysql'**이다. mysql은 보통 CLI(Command Line Interface) 환경에서 사용하기도 하는데 일반 사용자 입장에서는 불편하긴하지만 성능이 빠르다는 장점도 있다. **MySQL Workbench**는 사용자들이 이용하기 편하도록 GUI(Graphic User Interface)환경에서 작업할 수 있도록 하는 프로그램이다.
+
+<img src="https://user-images.githubusercontent.com/64063767/109658926-7c008e00-7baa-11eb-86d8-1324b92a1e4e.png" alt="image" style="zoom:50%;" />
+
+<br/>
+
+## sys database
+
+<img src="https://user-images.githubusercontent.com/64063767/109659542-1e207600-7bab-11eb-92f1-9610a5b1ad44.png" alt="image"  />
+
+- client 프로그램으로 처음 server에 접속하면 생성하지 않았던 "sys" 데이터베이스가 기본으로 생성되어있는 것을 볼 수 있다. **sys database는 MySQL server의 성능 관련 정보들을 갖고있는 데이터베이스이다.** 
+- DBMS를 사용하는 사람에 따라 사용용도가 크게 달라진다.
+  - (1) 기획자/마케터 : 데이터베이스에 저장된 데이터를 잘 분석해서 시장 및 고객을 분석
+  - (2) 백엔드 개발자/데이터베이스 관리자 : 데이터가 빠르고 안정적으로, 조회 및 저장될 수 있도록 개발 및 관리
+  - 특히 (2) 백엔드 개발자/데이터베이스 관리자의 입장에서는 DBMS가 성능 저하 없이 효율적으로 작업을 처리하고 있는지 체크하는 것이 매우 중요하다. MySQL에서 이런 정보를 확인할 수 있는 기본 데이터베이스 중 하나가 sys database인 것이다.
+
+<br/>
+
 # Structured Query Language
 
-> SQL은 관계형 데이터베이스 관리시스템(RDBMS)의 데이터를 관리하기 위해 설계된 특수목적의 프로그래밍 언어이다.
->
-> RDBMS에서 데이터의 조회와 관리, 데이터베이스 스키마 생성과 수정, 데이터베이스 객체 접근 조정관리를 위해 고안되었다.
+- SQL은 관계형 데이터베이스 관리시스템(RDBMS)의 데이터를 관리하기 위해 설계된 특수목적의 프로그래밍 언어이다.
+- RDBMS에서 데이터의 조회와 관리, 데이터베이스 스키마 생성과 수정, 데이터베이스 객체 접근 조정관리를 위해 고안되었다.
 
 <br/>
 
@@ -52,15 +104,15 @@
 
 <br/>
 
----
-
 ## 스키마(Schema)
 
 **데이터베이스에 관한 모든 설계사항**
 
->- '스키마는 만드셨나요?'
->- '이번에 앱이 업데이트되면 스키마에 큰 변화가 있을 것 같습니다.'
->- '스키마가 우리 비즈니스 상황에 최적화되지 않은 것 같군요'
+- '스키마는 만드셨나요?'
+
+- '이번에 앱이 업데이트되면 스키마에 큰 변화가 있을 것 같습니다.'
+
+- '스키마가 우리 비즈니스 상황에 최적화되지 않은 것 같군요'
 
 어떤 데이터베이스를 새롭게 구축할 때는 가장 처음에 '스키마'를 짜야한다. 이 스키마를 짜는 것을 '**데이터베이스 모델링**' 또는 '**데이터베이스 디자인**'이라고 한다.
 
@@ -80,43 +132,41 @@
 
 <br/>
 
----
+## 실무에서 데이터베이스 현황 분석
 
-## 실무에서 데이터베이스 현황 파악
+기존 직원 분들의 설명을 듣고, 문서화된 자료를 읽는 것이 가장 좋다. 그리고 그것과 동시에 데이터베이스 현황을 간단하게 파악할 수 있는 SQL 문을 알고 직접 적용해보는 것이 좋다.
 
-> 기존 직원 분들의 설명을 듣고, 문서화된 자료를 읽는 것이 가장 좋다. 그리고 그것과 동시에 데이터베이스 현황을 간단하게 파악할 수 있는 SQL 문을 알고 직접 적용해보는 것이 좋다.
->
-> 회사의 서버에
->
-> 1. 어떤 데이터베이스들이 있는지
->
->    ```mysql
->    SHOW DATABASES;
->    ```
->
-> 2. 각 데이터베이스 안에 어떤 테이블들이 있는지
->
->    ```mysql
->    -- 하나의 데이터베이스 안의 테이블들(뷰도 포함) 파악
->    SHOW FULL TABLES IN copang_main;
->    ```
->
-> 3. 각 테이블의 컬럼 구조는 어떻게 되는지
->
->    ```mysql
->    -- 한 테이블의 컬럼 구조 파악
->    DESCRIBE item;
->    ```
->
-> 4. 테이블들 간의 Foreign Key 관계는 어떤지
->
->    ```mysql
->    -- 모든 데이터베이스에서 모든 테이블간의 Foreign Key(외래키) 파악
->    SELECT
->    	i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
->    	k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
->    FROM information_schema.TABLE_CONSTRAINTS AS i
->    LEFT JOIN information_schema.KEY_COLUMN_USAGE AS k
->    ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME
->    WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
->    ```
+1. 어떤 데이터베이스들이 있는지
+
+   ```mysql
+   SHOW DATABASES;
+   ```
+
+2. 각 데이터베이스 안에 어떤 테이블들이 있는지
+
+   ```mysql
+   -- 하나의 데이터베이스 안의 테이블들(뷰도 포함) 파악
+   SHOW FULL TABLES IN copang_main;
+   ```
+
+3. 각 테이블의 컬럼 구조는 어떻게 되는지
+
+   ```mysql
+   -- 한 테이블의 컬럼 구조 파악
+   DESCRIBE item;
+   ```
+
+4. 테이블들 간의 Foreign Key 관계는 어떤지
+
+   - **두 테이블의 각 컬럼 간에 Foreign Key 관계가 논리적으로 성립한다고 해도, 실제 DBMS 상에서는 관리자가 그것을 Foreign Key로 설정하지 않는 경우도 많다.** 관리자의 실수일 수도 있고, 데이터베이스의 성능을 고려해서 의도적으로 외래키 설정을 안했을 수도 있다.
+
+   ```mysql
+   -- 모든 데이터베이스에서 모든 테이블간의 Foreign Key(외래키) 파악
+   SELECT
+   	i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
+   	k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
+   FROM information_schema.TABLE_CONSTRAINTS AS i
+   LEFT JOIN information_schema.KEY_COLUMN_USAGE AS k
+   ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+   WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
+   ```
